@@ -38,8 +38,8 @@ class BasicSimulation extends Simulation { // 3. The class declaration. Note tha
       // https://stackoverflow.com/questions/56664382/how-to-read-body-as-string-before-sending-request-in-gatling
       .sign(new SignatureCalculator {
       override def sign(request: Request): Unit = {
-        val bodyStr = request.getBody().getBytes;
-        val str = new String(bodyStr, StandardCharsets.UTF_8)
+        val bodyBytes = request.getBody().getBytes;
+        val bodyStr = new String(bodyBytes, StandardCharsets.UTF_8)
         // https://stackoverflow.com/questions/57238382/how-to-generate-a-hmac-signature-using-common-module-gatling3-1
         request.getHeaders.add("Authorization", "foo")
       }
