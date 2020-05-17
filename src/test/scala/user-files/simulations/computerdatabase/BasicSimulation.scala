@@ -64,3 +64,8 @@ class BasicSimulation extends Simulation { // 3. The class declaration. Note tha
     ) // 12. Declaring to inject into scenario named scn one single user.
   ).protocols(httpProtocol) // 13. Attaching the HTTP configuration declared above.
 }
+
+// Expression[T]  is a type alias for Session => Validation[T].
+// https://gatling.io/docs/current/session/expression_el/
+
+// Validation concept: https://gatling.io/docs/current/session/validation/#validation
