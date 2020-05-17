@@ -1,6 +1,8 @@
 // https://gatling.io/docs/current/quickstart/
 package computerdatabase // 1.The optional package.
 
+import java.nio.charset.StandardCharsets
+
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
@@ -29,7 +31,28 @@ class BasicSimulation extends Simulation { // 3. The class declaration. Note tha
     // https://gatling.io/docs/current/general/scenario
     // Conditional statements¶
     .doIf(_ ("response_key").as[String].toDouble < 0.5) {
-    exec(http("post some data when some condition met").post("/post"))
+    exec(http("post some data when some condition met")
+      .post("/post")
+      .header("Content-Type", "application/json")
+      .body(ElFileBody("user-files/resources/httpbin.post.json"))
+      // https://stackoverflow.com/questions/56664382/how-to-read-body-as-string-before-sending-request-in-gatling
+      .sign(new SignatureCalculator {
+      override def sign(request: Request): Unit = {
+        val bodyStr = request.getBody().getBytes;
+        val str = new String(bodyStr, StandardCharsets.UTF_8)
+        // https://stackoverflow.com/questions/57238382/how-to-generate-a-hmac-signature-using-common-module-gatling3-1
+        request.getHeaders.add("Authorization", "foo")
+      }
+    })
+      // https://gatling.io/docs/current/http/http_request/
+      .processRequestBody({ body => {
+      //  println(body.toString)
+      body
+    }
+    })
+
+      .check(status is 200)
+    )
   }
   //    .pause(5) // 10. Some pause/think time.
 
